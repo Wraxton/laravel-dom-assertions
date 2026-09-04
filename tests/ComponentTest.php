@@ -579,3 +579,18 @@ it('assertElementContainsText throws if text does not match', function (): void 
     $this->component(NestedComponent::class)
         ->assertElementContainsText('span.foo', 'non-existing');
 })->throws(AssertionFailedError::class);
+
+it('assertElementContainsNormalizedText works as expected', function (): void {
+    $this->component(NestedComponent::class)
+        ->assertElementContainsNormalizedText('p.foo.bar', 'Foo Bar');
+});
+
+it('assertElementContainsNormalizedText can ignore case', function (): void {
+    $this->component(NestedComponent::class)
+        ->assertElementContainsNormalizedText('p.foo.bar', 'foo bar', ignoreCase: true);
+});
+
+it('assertElementContainsNormalizedText throws if text does not match', function (): void {
+    $this->component(NestedComponent::class)
+        ->assertElementContainsNormalizedText('p.foo.bar', 'Bar Foo');
+})->throws(AssertionFailedError::class);
