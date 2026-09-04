@@ -278,6 +278,50 @@ it('matches doesntContainText across collapsed whitespace when normalizing', fun
         });
 });
 
+it('matches containsNormalizedText across collapsed whitespace', function (): void {
+    $this->get('nesting')
+        ->assertElementExists('p.foo.bar', static function (AssertElement $element): void {
+            $element->containsNormalizedText('Foo Bar');
+        });
+});
+
+it('matches containsNormalizedText ignoring case', function (): void {
+    $this->get('nesting')
+        ->assertElementExists('p.foo.bar', static function (AssertElement $element): void {
+            $element->containsNormalizedText('foo bar', ignoreCase: true);
+        });
+});
+
+it('normalizes with containsNormalizedText when the config disables it', function (): void {
+    config()->set('dom-assertions.normalize_whitespace', false);
+
+    $this->get('nesting')
+        ->assertElementExists('p.foo.bar', static function (AssertElement $element): void {
+            $element->containsNormalizedText('Foo Bar');
+        });
+});
+
+it('fails containsNormalizedText when the text is missing', function (): void {
+    $this->get('nesting')
+        ->assertElementExists('p.foo.bar', static function (AssertElement $element): void {
+            $element->containsNormalizedText('Bar Foo');
+        });
+})->throws(AssertionFailedError::class, 'Could not find text content "Foo Bar" containing Bar Foo');
+
+it('matches doesntContainNormalizedText across collapsed whitespace', function (): void {
+    $this->get('nesting')
+        ->assertElementExists('p.foo.bar', static function (AssertElement $element): void {
+            $element->doesntContainNormalizedText('Bar Foo');
+        });
+});
+
+it('fails doesntContainNormalizedText when the text is present', function (): void {
+    $this->get('nesting')
+        ->assertElementExists('p.foo.bar', static function (AssertElement $element): void {
+            $element->doesntContainNormalizedText('Foo Bar');
+        });
+})->throws(AssertionFailedError::class, 'Found text content "Foo Bar" containing Foo Bar');
+
 it('can match a class no matter the order', function (): void {
     $this->get('nesting')
         ->assertElementExists(static function (AssertElement $element): void {
